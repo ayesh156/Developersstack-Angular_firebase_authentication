@@ -1,0 +1,270 @@
+// Lifecycle hooks
+//================= OnInit
+
+//----------- app.component.html
+
+<h1>{{text}}</h1>
+
+//----------- app.component.ts
+
+export class AppComponent implements OnInit {
+  text:string = '';
+
+  constructor(){
+    setTimeout(()=>{
+      this.text = 'Nimal';
+    },2000);
+  }
+  ngOnInit(): void {
+    setTimeout(()=>{
+      this.text = 'Bandara';
+    },3000)
+  }
+
+}
+
+
+//================= DoCheck
+
+//----------- app.component.html
+
+<input type="text" [(ngModel)]="text">
+<h1>{{text}}</h1>
+
+//----------- app.component.ts
+
+export class AppComponent implements DoCheck {
+  text: string = '';
+
+  ngDoCheck(): void {
+    console.log(this.text);
+
+  }
+
+}
+
+//================= AfterContentChecked, AfterContentInit
+
+//----------- app.component.html
+
+<input type="text" [(ngModel)]="text">
+<h1>{{text}}</h1>
+
+//----------- app.component.ts
+
+export class AppComponent implements AfterContentChecked,AfterContentInit {
+  
+  text: string = '';
+
+  ngAfterContentInit(): void {
+    console.log('ngAfterContentInit');
+    
+  }
+  ngAfterContentChecked(): void {
+    console.log('ngAfterContentChecked');
+    
+  }
+
+}
+
+//================= Send data Super to child AppComponent
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  simpleText:string = '';
+
+}
+
+//----------- app.component.html
+
+<input type="text" [(ngModel)]="simpleText">
+
+<app-child [message]="simpleText"></app-child>
+
+//----------- child.component.html
+
+<h2>Message: {{message}}</h2>
+
+//----------- child.component.ts
+
+export class ChildComponent {
+
+  @Input() message:string = '';
+  
+}
+
+//================= Send data Super to child AppComponent with OnChanges
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  simpleText:string = '';
+
+}
+
+//----------- app.component.html
+
+<input type="text" [(ngModel)]="simpleText">
+
+<app-child [message]="simpleText"></app-child>
+
+//----------- child.component.html
+
+<h2>Message: {{message}}</h2>
+
+//----------- child.component.ts
+
+export class ChildComponent implements OnChanges {
+
+  @Input() message:string = '';
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    console.log(changes['message'].currentValue);
+    console.log(changes['message'].previousValue);
+  }
+
+}
+
+//================= Send data Child to Super AppComponent with OnChanges
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  superMessage='';
+
+  show(data:string) {
+    this.superMessage = data;
+  }
+
+}
+
+
+//----------- app.component.html
+
+<h1>Parent Component {{superMessage}}</h1>
+<hr>
+<app-child (childData)="show($event)"></app-child>
+
+//----------- child.component.html
+
+<input type="text" [(ngModel)]="inputText" (keyup.enter)="trigger()"> | {{inputText}}
+
+//----------- child.component.ts
+
+export class ChildComponent {
+
+  @Output() childData: EventEmitter<string> = new EventEmitter<string>();
+
+  inputText:string = '';
+
+  trigger() {
+    this.childData.emit(this.inputText);
+  }
+
+}
+
+// Pipe
+//================= DatePipe
+
+//----------- app.component.html
+
+{{date | date:'M/d/yy, h:mm a'}}
+
+//-----------
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  date = new Date();
+
+}
+
+//----------- app.component.html
+
+{{date | date:'MMM d, y'}}
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  date = new Date();
+
+}
+
+//================= CurrencyPipe
+
+//----------- app.component.html
+
+{{salary | currency}}
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  salary = 25000;
+
+}
+
+//-----------
+//----------- app.component.html
+
+{{salary | lkrCurrency}}
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  salary = 25000;
+
+}
+
+//----------- LkrPipe.ts
+
+export class LkrPipe implements PipeTransform{
+
+    transform(value: number, digits:string='1.2-2') {
+        if(value == null) return null;
+
+        let sortedData = new Intl.NumberFormat('en-LK',{
+            style:'currency',
+            currency:'LKR',
+            minimumFractionDigits:parseInt(digits.split('-')[1],10),
+            maximumFractionDigits:parseInt(digits.split('-')[1],10),
+        }).format(Number(value));
+
+        return sortedData;
+    }
+}
+
+//================= ngSwitch attribute directive
+
+//----------- app.component.html
+
+<select name="" id="" [(ngModel)]="option">
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+</select>
+
+<div [ngSwitch]="option">
+    <div *ngSwitchCase="'A'">Option A</div>
+    <div *ngSwitchCase="'B'">Option B</div>
+    <div *ngSwitchCase="'C'">Option C</div>
+    <div *ngSwitchCase="'D'">Option D</div>
+</div>
+
+//----------- app.component.ts
+
+export class AppComponent {
+  
+  option = 'A';
+
+}
+
+

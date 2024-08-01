@@ -1,0 +1,17 @@
+/* google-auth-button.component.scss */
+.google-btn {
+    display: flex;
+    align-items: center;
+    background-color: #4285f4; /* Google's primary blue */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #357ae8; /* Darker blue on hover */
+    }
+  }
